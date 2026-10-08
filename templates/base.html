@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#F7F5EF">
+  <meta name="description" content="CIRCULINK — Tuna takataka, tunataka taka. Kenya's circular material marketplace connecting supply, collection, buyers and EPR evidence.">
+  <title>{% block title %}CIRCULINK{% endblock %}</title>
+  <link rel="icon" href="{{ url_for('static', filename='favicon.png') }}" type="image/png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="preload" as="image" href="{{ url_for('static', filename='img/circulink-logo-transparent.png') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/tokens.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/layout.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/components.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/forms.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/cards.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/tables.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/marketplace.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/accessibility.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/site.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/responsive.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/circulink-mega.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/circulink-atlas.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/operations.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/admin-unified.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/circulink-v3-design.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/circulink-uniform.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='vendor/leaflet/leaflet.css') }}">
+</head>
+<body>
+  <div class="startup" id="startup" aria-label="Loading CIRCULINK" role="status">
+    <div class="startup-inner">
+      <img src="{{ url_for('static', filename='img/circulink-logo-transparent.png') }}" alt="CIRCULINK">
+      <span>CIRCULINK</span><small>TUNA TAKA TAKA</small><i></i>
+    </div>
+  </div>
+  <a class="skip-link" href="#main-content">Skip to content</a>
+
+  <div class="app-v3">
+    <aside class="v3-rail" aria-label="CIRCULINK navigation">
+      <a class="v3-brand" href="/" aria-label="CIRCULINK home">
+        <img src="{{ url_for('static', filename='img/circulink-logo-transparent.png') }}" alt="CIRCULINK">
+        <span><span class="v3-brand-name">CIRCULINK</span><span class="v3-brand-sub">TUNA TAKA TAKA</span></span>
+      </a>
+
+      <nav class="v3-nav" aria-label="Primary">
+        <span class="v3-nav-label">Explore</span>
+        <a data-nav href="/"> <img src="https://cdn.jsdelivr.net/npm/@fluentui/svg-icons/icons/home_20_regular.svg" alt="">Overview</a>
+        <a data-nav href="/marketplace/"><img src="https://cdn.jsdelivr.net/npm/@fluentui/svg-icons/icons/store_microsoft_20_regular.svg" alt="">Marketplace</a>
+        <a data-nav href="/platform/"><img src="https://cdn.jsdelivr.net/npm/@fluentui/svg-icons/icons/desktop_20_regular.svg" alt="">Platform</a>
+        <a data-nav href="/circular/requests"><img src="https://cdn.jsdelivr.net/npm/@fluentui/svg-icons/icons/box_20_regular.svg" alt="">Demand & requests</a>
+        <a data-nav href="/about"><img src="https://cdn.jsdelivr.net/npm/@fluentui/svg-icons/icons/people_20_regular.svg" alt="">How it works</a>
+        <a data-nav href="/contact"><img src="https://cdn.jsdelivr.net/npm/@fluentui/svg-icons/icons/mail_20_regular.svg" alt="">Contact</a>
+      </nav>
+
+      {% if session.get('user_id') %}
+      <nav class="v3-nav" aria-label="Workspace">
+        <span class="v3-nav-label">Workspace</span>
+        <a data-nav href="/platform/"><img src="https://cdn.jsdelivr.net/npm/@fluentui/svg-icons/icons/desktop_20_regular.svg" alt="">Platform workspace</a>
+        <a data-nav href="/dashboard/inventory"><img src="https://cdn.jsdelivr.net/npm/@fluentui/svg-icons/icons/box_20_regular.svg" alt="">Inventory</a>
+        <a data-nav href="/dashboard/pickups"><img src="https://cdn.jsdelivr.net/npm/@fluentui/svg-icons/icons/vehicle_truck_profile_20_regular.svg" alt="">Pickups</a>
+        <a data-nav href="/dashboard/transactions"><img src="https://cdn.jsdelivr.net/npm/@fluentui/svg-icons/icons/payment_20_regular.svg" alt="">Transactions</a>
+        <a data-nav href="/circular/wallet"><img src="https://cdn.jsdelivr.net/npm/@fluentui/svg-icons/icons/payment_20_regular.svg" alt="">Wallet</a>
+      </nav>
+      {% endif %}
+
+      <div class="v3-rail-foot">
+        <div class="v3-rail-note"><strong>Trace every kilogram.</strong><br>Move material through a clear marketplace trail.</div>
+        {% if session.get('user_id') %}
+          <a class="button secondary small" href="/auth/logout">Sign out</a>
+        {% else %}
+          <a class="button primary small" href="/auth/register">Create account</a>
+        {% endif %}
+      </div>
+    </aside>
+
+    <section class="v3-main">
+      <header class="v3-topbar">
+        <button class="v3-menu" type="button" data-nav-toggle aria-expanded="false" aria-label="Open navigation">
+          <img src="https://cdn.jsdelivr.net/npm/@fluentui/svg-icons/icons/navigation_20_regular.svg" alt="">
+        </button>
+        <form class="v3-search" action="/marketplace/" method="get" role="search">
+          <img src="https://cdn.jsdelivr.net/npm/@fluentui/svg-icons/icons/search_20_regular.svg" alt="">
+          <input name="q" value="{{ request.args.get('q','') }}" placeholder="Search materials, buyers and locations" aria-label="Search CIRCULINK">
+        </form>
+        <div class="v3-top-actions">
+          <button class="v3-theme-btn" type="button" data-theme-toggle aria-label="Toggle theme" aria-pressed="false"><img src="https://cdn.jsdelivr.net/npm/@fluentui/svg-icons/icons/weather_moon_20_regular.svg" alt=""></button>
+          {% if session.get('user_id') %}
+          <a class="v3-icon-btn" href="/dashboard/" aria-label="Notifications"><img src="https://cdn.jsdelivr.net/npm/@fluentui/svg-icons/icons/alert_20_regular.svg" alt=""></a>
+          <a class="v3-avatar" href="/dashboard/" aria-label="Open account">CL</a>
+          {% else %}
+          <a class="button secondary small" href="/auth/login">Sign in</a>
+          {% endif %}
+        </div>
+      </header>
+
+      {% with m=get_flashed_messages(with_categories=true) %}
+        {% if m %}<div class="toasts" aria-live="polite">{% for c,x in m %}<div class="toast {{c}}"><span>{{x}}</span><button type="button" class="toast-close" aria-label="Dismiss"><img class="fluent-icon" src="https://cdn.jsdelivr.net/npm/@fluentui/svg-icons/icons/dismiss_20_regular.svg" alt=""></button></div>{% endfor %}</div>{% endif %}
+      {% endwith %}
+
+      <main id="main-content" class="v3-content">
+        {% if mhub_ad and mhub_ad.enabled %}
+        <aside class="mhub-ad card sand" aria-label="Platform notice">
+          <span class="eyebrow">PLATFORM NOTICE</span><strong>{{ mhub_ad.title }}</strong><span>{{ mhub_ad.text }}</span>
+          {% if mhub_ad.link_url %}<a class="button small secondary" href="{{ mhub_ad.link_url }}">{{ mhub_ad.link_label or 'Learn more' }}</a>{% endif %}
+        </aside>
+        {% endif %}
+        {% block content %}{% endblock %}
+      </main>
+
+      <footer class="v3-footer">
+        <div class="footer-brand"><img src="{{ url_for('static', filename='img/circulink-logo-transparent.png') }}" alt="" width="42"><div><strong>CIRCULINK</strong><span>TUNA TAKA TAKA</span><small>Materials move. Value stays in the loop.</small></div></div>
+        <div class="footer-links"><a href="/marketplace/">Marketplace</a><a href="/sdgs">SDG alignment</a><a href="/about">About</a><a href="/contact">Contact</a></div>
+        <small class="footer-note">CIRCULINK records marketplace activity and material movement. Compliance claims remain subject to applicable Kenyan requirements and verification.</small>
+      </footer>
+    </section>
+  </div>
+
+  <script src="{{ url_for('static', filename='js/site.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/site-protection.js') }}" defer></script>
+  <script src="{{ url_for('static', filename='js/receipt-dashboard.js') }}" defer></script>
+  <script src="{{ url_for('static', filename='js/circulink-v3.js') }}" defer></script>
+  {% block scripts %}{% endblock %}
+</body>
+</html>
