@@ -1,0 +1,28 @@
+<nav class="admin-sidebar" aria-label="Admin sections">
+  <div class="admin-side-brand">
+    <img src="{{ url_for('static',filename='img/circulink-logo-transparent.png') }}" alt="CIRCULINK">
+    <div><strong>CIRCULINK</strong><span>OPERATIONS CONSOLE</span></div>
+  </div>
+  <div class="admin-nav-list">
+    <a href="/admin/" class="admin-link {% if request.path == '/admin/' %}active{% endif %}"><img class="fluent-icon" src="https://cdn.jsdelivr.net/npm/@fluentui/svg-icons/icons/home_20_regular.svg" alt=""><span>Command Center</span></a>
+    <a href="/admin/users" class="admin-link {% if request.path == '/admin/users' %}active{% endif %}"><img class="fluent-icon" src="https://cdn.jsdelivr.net/npm/@fluentui/svg-icons/icons/people_20_regular.svg" alt=""><span>Users</span></a>
+    <a href="/admin/material-types" class="admin-link {% if request.path == '/admin/material-types' %}active{% endif %}"><img class="fluent-icon" src="https://cdn.jsdelivr.net/npm/@fluentui/svg-icons/icons/tag_20_regular.svg" alt=""><span>Material Types</span></a>
+    <a href="/admin/listings" class="admin-link {% if request.path == '/admin/listings' %}active{% endif %}"><img class="fluent-icon" src="https://cdn.jsdelivr.net/npm/@fluentui/svg-icons/icons/clipboard_bullet_list_20_regular.svg" alt=""><span>Listings</span></a>
+    <a href="/admin/orders" class="admin-link {% if request.path == '/admin/orders' %}active{% endif %}"><img class="fluent-icon" src="https://cdn.jsdelivr.net/npm/@fluentui/svg-icons/icons/cart_20_regular.svg" alt=""><span>Marketplace Orders</span></a>
+    <a href="/admin/payments" class="admin-link {% if request.path == '/admin/payments' %}active{% endif %}"><img class="fluent-icon" src="https://cdn.jsdelivr.net/npm/@fluentui/svg-icons/icons/payment_20_regular.svg" alt=""><span>Payments</span></a>
+    <a href="/admin/requests" class="admin-link {% if request.path == '/admin/requests' %}active{% endif %}"><img class="fluent-icon" src="https://cdn.jsdelivr.net/npm/@fluentui/svg-icons/icons/clipboard_task_20_regular.svg" alt=""><span>Material Requests</span></a>
+    <a href="/admin/revenue" class="admin-link {% if request.path == '/admin/revenue' %}active{% endif %}"><img class="fluent-icon" src="https://cdn.jsdelivr.net/npm/@fluentui/svg-icons/icons/money_20_regular.svg" alt=""><span>Finance &amp; Revenue</span></a>
+    <a href="/admin/payouts" class="admin-link {% if request.path == '/admin/payouts' %}active{% endif %}"><img class="fluent-icon" src="https://cdn.jsdelivr.net/npm/@fluentui/svg-icons/icons/wallet_20_regular.svg" alt=""><span>Payouts &amp; Points</span></a>
+    <a href="/admin/circular/finance" class="admin-link {% if request.path == '/admin/circular/finance' %}active{% endif %}"><img class="fluent-icon" src="https://cdn.jsdelivr.net/npm/@fluentui/svg-icons/icons/calculator_20_regular.svg" alt=""><span>Commission &amp; Points</span></a>
+    <a href="/admin/certificates" class="admin-link {% if request.path == '/admin/certificates' %}active{% endif %}"><img class="fluent-icon" src="https://cdn.jsdelivr.net/npm/@fluentui/svg-icons/icons/ribbon_20_regular.svg" alt=""><span>Certificates</span></a>
+    <a href="/admin/plans" class="admin-link {% if request.path == '/admin/plans' %}active{% endif %}"><img class="fluent-icon" src="https://cdn.jsdelivr.net/npm/@fluentui/svg-icons/icons/layer_20_regular.svg" alt=""><span>Plans</span></a>
+    <a href="/admin/messages" class="admin-link {% if request.path == '/admin/messages' %}active{% endif %}"><img class="fluent-icon" src="https://cdn.jsdelivr.net/npm/@fluentui/svg-icons/icons/mail_20_regular.svg" alt=""><span>Inbox</span></a>
+    <a href="/admin/notifications" class="admin-link {% if request.path == '/admin/notifications' %}active{% endif %}"><img class="fluent-icon" src="https://cdn.jsdelivr.net/npm/@fluentui/svg-icons/icons/alert_20_regular.svg" alt=""><span>Notifications</span></a>
+    <a href="/admin/mhub" class="admin-link {% if request.path == '/admin/mhub' %}active{% endif %}"><img class="fluent-icon" src="https://cdn.jsdelivr.net/npm/@fluentui/svg-icons/icons/sparkle_20_regular.svg" alt=""><span>M-Hub Feature</span></a>
+    <a href="/admin/settings" class="admin-link {% if request.path == '/admin/settings' %}active{% endif %}"><img class="fluent-icon" src="https://cdn.jsdelivr.net/npm/@fluentui/svg-icons/icons/settings_20_regular.svg" alt=""><span>Settings</span></a>
+    <a href="/admin/audit" class="admin-link {% if request.path == '/admin/audit' %}active{% endif %}"><img class="fluent-icon" src="https://cdn.jsdelivr.net/npm/@fluentui/svg-icons/icons/history_20_regular.svg" alt=""><span>Audit History</span></a>
+  </div>
+  <div class="admin-side-foot">
+    <a href="/auth/logout" class="admin-link admin-signout"><img class="fluent-icon" src="https://cdn.jsdelivr.net/npm/@fluentui/svg-icons/icons/sign_out_20_regular.svg" alt=""><span>Sign out</span></a>
+  </div>
+</nav>

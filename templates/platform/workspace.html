@@ -1,0 +1,148 @@
+{% extends 'base.html' %}
+{% block title %}CIRCULINK Platform{% endblock %}
+{% block content %}
+<div class="platform-workspace" data-platform-view="{{ active_view }}">
+  <div class="platform-head">
+    <div>
+      <span class="eyebrow">CIRCULINK PLATFORM</span>
+      <h1>Turn waste into <span class="c-green">verified</span> raw material.</h1>
+      <p>One working surface for households, collectors, buyers, transactions and EPR traceability. Live records only; empty states stay empty.</p>
+    </div>
+    <div class="platform-actions">
+      <a class="btn primary" href="/marketplace/"><img class="fluent-icon on-green" src="https://cdn.jsdelivr.net/npm/@fluentui/svg-icons/icons/store_microsoft_20_regular.svg" alt="">Open marketplace</a>
+      {% if user.account_type == 'company' %}<a class="btn ghost" href="/circular/requests">Post demand</a>{% else %}<a class="btn ghost" href="/marketplace/add">List material</a>{% endif %}
+    </div>
+  </div>
+
+  <nav class="platform-tabs" aria-label="Platform workspaces">
+    {% for key,label in [('home','Overview'),('marketplace','Marketplace'),('household','Household'),('collector','Collector'),('buyer','Buyer'),('compliance','EPR compliance'),('transactions','Payments'),('messages','Messages'),('verification','Verification')] %}
+      <a class="platform-tab {% if active_view == key %}active{% endif %}" href="/platform/?view={{ key }}">{{ label }}{% if key == 'messages' and stats.unread %}<span class="tab-count">{{ stats.unread }}</span>{% endif %}</a>
+    {% endfor %}
+    {% if user.role == 'ADMIN' %}<a class="platform-tab {% if active_view == 'admin' %}active{% endif %}" href="/platform/?view=admin">Admin</a>{% endif %}
+    <a class="platform-tab {% if active_view == 'system' %}active{% endif %}" href="/platform/?view=system">System</a>
+  </nav>
+
+  {% if active_view == 'home' %}
+  <section class="platform-section">
+    <div class="platform-hero-grid">
+      <article class="card solid platform-hero-card">
+        <span class="eyebrow on-solid">CIRCULAR MATERIAL MARKETPLACE</span>
+        <h2>Why are factories drowning in plastic?</h2>
+        <p>Cheap plastic gets costly when waste obligations, collection gaps and poor traceability become operational risk.</p>
+        <div class="hero-callout"><strong>Trace every kilogram.</strong><span>Move material from source to buyer with a recorded marketplace trail.</span></div>
+      </article>
+      <article class="card platform-kpi-card">
+        <div class="card-head"><div><h2 class="h3">Live marketplace</h2><p class="small muted">Current database records</p></div><span class="pill ok">{% if db_ready %}Connected{% else %}Unavailable{% endif %}</span></div>
+        <div class="metric-grid">
+          <div class="kpi"><span class="label">Active listings</span><strong class="num-md">{{ stats.active_listings }}</strong></div>
+          <div class="kpi"><span class="label">Available material</span><strong class="num-md">{{ '%.1f'|format(stats.available_kg) }} kg</strong></div>
+          <div class="kpi"><span class="label">Traded / recorded</span><strong class="num-md">{{ '%.1f'|format(stats.traded_kg) }} kg</strong></div>
+          <div class="kpi"><span class="label">Certificates</span><strong class="num-md">{{ stats.certificates }}</strong></div>
+        </div>
+      </article>
+    </div>
+
+    <div class="grid g3 platform-gap">
+      <article class="card"><span class="num-md">01</span><h3 class="h3">Collectors are fragmented</h3><p class="muted">Verification, pickup records and material evidence belong in one workflow.</p></article>
+      <article class="card"><span class="num-md">02</span><h3 class="h3">Factories need consistency</h3><p class="muted">Demand posts and marketplace matching expose volume, material and location.</p></article>
+      <article class="card"><span class="num-md">03</span><h3 class="h3">Compliance needs evidence</h3><p class="muted">Batches, weigh slips, transactions and certificates form the audit trail.</p></article>
+    </div>
+
+    <article class="card platform-gap">
+      <div class="card-head"><div><span class="eyebrow">THE CIRCULINK BRIDGE</span><h2 class="h2">From collection to compliance record</h2></div><a class="btn sm ghost" href="/marketplace/">Browse live supply</a></div>
+      <div class="flow" style="--steps:4">
+        {% for n,title,desc in [('01','Source','Households and collectors publish real material with location and photos.'),('02','Match','Buyers search supply, post demand and negotiate offers.'),('03','Confirm','Pickup, weight and payment states move the deal forward.'),('04','Record','Batches and certificates preserve the traceability trail.') ] %}
+        <div class="flow-step {% if n == '03' %}hot{% endif %}"><span class="n">{{ n }}</span><h3>{{ title }}</h3><p>{{ desc }}</p></div>
+        {% endfor %}
+      </div>
+    </article>
+  </section>
+  {% endif %}
+
+  {% if active_view == 'marketplace' %}
+  <section class="platform-section">
+    <div class="page-head"><div><span class="eyebrow">MARKETPLACE</span><h2>Find material and buyers in one place.</h2><p>Live active listings from the CIRCULINK database, with location data where a listing provides coordinates.</p></div><a class="btn primary" href="/marketplace/">Open full marketplace</a></div>
+    <div class="market-live-grid">
+      <div class="card table-card"><div class="card-head"><h3 class="h3">Live supply</h3><span class="pill ok">{{ listings|length }} records</span></div>
+        {% if listings %}<div class="table-wrap"><table><thead><tr><th>Material</th><th>Location</th><th>Quantity</th><th>Price</th><th>Status</th><th></th></tr></thead><tbody>{% for x in listings %}<tr><td><strong>{{ x.title }}</strong><div class="small muted">{{ x.material }}</div></td><td>{{ (x.location or {}).get('name') or 'Location not provided' }}</td><td>{{ '%.1f'|format(x.quantity|float) }} {{ x.unit or 'kg' }}</td><td>KES {{ '%.2f'|format(x.price|float) }}</td><td><span class="pill {% if x.status == 'active' %}ok{% elif x.status == 'sold_out' %}warn{% else %}info{% endif %}">{{ x.status }}</span></td><td><a class="btn sm ghost" href="/marketplace/listing/{{ x._id }}">View</a></td></tr>{% endfor %}</tbody></table></div>{% else %}<div class="empty"><h3>No live listings yet</h3><p>Publish the first real material listing to populate the marketplace.</p><a class="btn primary" href="/marketplace/add"><img class="fluent-icon on-green" src="https://cdn.jsdelivr.net/npm/@fluentui/svg-icons/icons/add_circle_20_regular.svg" alt="">List material</a></div>{% endif %}
+      </div>
+      <div class="card map-card"><div class="card-head"><h3 class="h3">Live map</h3><span class="small muted">Listings + platform points</span></div><div id="platform-map" class="platform-map" data-points='{{ map_points|tojson }}'></div></div>
+    </div>
+  </section>
+  {% endif %}
+
+  {% if active_view == 'household' %}
+  <section class="platform-section"><div class="page-head"><div><span class="eyebrow">HOUSEHOLD</span><h2>Prepare recyclable material for collection.</h2><p>Use the existing pickup workflow and keep the transaction trail tied to your account.</p></div><a class="btn primary" href="/dashboard/pickups">Request pickup</a></div>
+    <div class="grid g3"><article class="card tint"><span class="eyebrow">STEP 01</span><h3 class="h3">Separate materials</h3><p class="muted">PET, HDPE, PP, film, paper, card and metal can be listed according to actual material condition.</p></article><article class="card"><span class="eyebrow">STEP 02</span><h3 class="h3">Add a real photo</h3><p class="muted">Listings require a real image before publication; uploads are retained under the platform media policy.</p></article><article class="card sand"><span class="eyebrow">STEP 03</span><h3 class="h3">Choose pickup or drop-off</h3><p class="muted">Use pickup scheduling or a verified drop-off workflow where available.</p></article></div>
+    <article class="card platform-gap"><div class="card-head"><h3 class="h3">Your recorded activity</h3><a class="btn sm ghost" href="/dashboard/transactions">Transactions</a></div>{% if transactions %}<div class="table-wrap"><table><thead><tr><th>Reference</th><th>Status</th><th>Amount</th><th>Date</th></tr></thead><tbody>{% for x in transactions %}<tr><td>{{ x.receipt_no or x._id }}</td><td><span class="pill">{{ x.status or 'pending' }}</span></td><td>KES {{ '%.2f'|format((x.amount or 0)|float) }}</td><td>{{ x.created_at }}</td></tr>{% endfor %}</tbody></table></div>{% else %}<div class="empty"><h3>No transactions recorded yet</h3><p>Your confirmed activity will appear here.</p></div>{% endif %}</article>
+  </section>
+  {% endif %}
+
+  {% if active_view == 'collector' %}
+  <section class="platform-section"><div class="page-head"><div><span class="eyebrow">COLLECTOR WORKSPACE</span><h2>Move material. Build a verified trail.</h2><p>Publish supply, manage pickups and follow payment status without replacing the existing transaction workflow.</p></div><a class="btn primary" href="/marketplace/add">Publish supply</a></div>
+    <div class="grid g3"><article class="card tint kpi"><span class="label">Your live supply</span><strong class="num-lg">{{ listings|selectattr('owner_id','equalto',user._id)|list|length }}</strong></article><article class="card kpi"><span class="label">Recorded batches</span><strong class="num-lg">{{ batches|length }}</strong></article><article class="card flag kpi"><span class="label">Paid transactions</span><strong class="num-lg">KES {{ '%.0f'|format(stats.paid_total) }}</strong></article></div>
+    <article class="card platform-gap"><div class="card-head"><h3 class="h3">Collector operating path</h3></div><div class="flow" style="--steps:4"><div class="flow-step"><span class="n">01</span><h3>Verify</h3><p>Complete identity and payout requirements.</p></div><div class="flow-step"><span class="n">02</span><h3>List</h3><p>Material, quantity, condition, price and location.</p></div><div class="flow-step hot"><span class="n">03</span><h3>Pickup</h3><p>Schedule and confirm actual weight.</p></div><div class="flow-step"><span class="n">04</span><h3>Get paid</h3><p>Follow the M-Pesa payment and receipt state.</p></div></div></article>
+  </section>
+  {% endif %}
+
+  {% if active_view == 'buyer' %}
+  <section class="platform-section"><div class="page-head"><div><span class="eyebrow">BUYER WORKSPACE</span><h2>Secure steady volume from verified supply.</h2><p>Post demand, compare material and keep the deal connected to payment and compliance records.</p></div><a class="btn primary" href="/circular/requests">Create demand</a></div>
+    <div class="grid g3"><article class="card tint kpi"><span class="label">Open demand</span><strong class="num-lg">{{ demands|length }}</strong></article><article class="card kpi"><span class="label">Orders</span><strong class="num-lg">{{ stats.orders }}</strong></article><article class="card sand kpi"><span class="label">Recorded batches</span><strong class="num-lg">{{ batches|length }}</strong></article></div>
+    <article class="card platform-gap"><div class="card-head"><h3 class="h3">Open demand posts</h3><a class="btn sm ghost" href="/circular/requests">Manage demand</a></div>{% if demands %}<div class="table-wrap"><table><thead><tr><th>Material</th><th>Volume</th><th>Site</th><th>Status</th></tr></thead><tbody>{% for d in demands %}<tr><td><strong>{{ d.material or d.title or 'Material' }}</strong></td><td>{{ d.quantity or d.volume or '—' }} kg</td><td>{{ d.delivery_site or d.site or 'Not provided' }}</td><td><span class="pill ok">{{ d.status }}</span></td></tr>{% endfor %}</tbody></table></div>{% else %}<div class="empty"><h3>No open demand posts</h3><p>Create a demand post when your company is ready to source material.</p></div>{% endif %}</article>
+  </section>
+  {% endif %}
+
+  {% if active_view == 'compliance' %}
+  <section class="platform-section"><div class="page-head"><div><span class="eyebrow">EPR TRACEABILITY</span><h2>Audit-ready material movement.</h2><p>Compliance views are built from recorded CIRCULINK batches. Targets are shown only when configured in platform data.</p></div><a class="btn ghost" href="/sdgs">SDG alignment</a></div>
+    <div class="grid split-60"><article class="card solid"><span class="eyebrow on-solid">RECORDED COLLECTION</span><strong class="num-xl">{{ '%.1f'|format(compliance.traded_kg) }}<span class="unit">kg</span></strong><p>Material recorded in the batches visible to your account.</p></article><article class="card flag"><span class="eyebrow">TARGET</span>{% if compliance.target_kg %}<strong class="num-lg">{{ '%.1f'|format(compliance.target_kg) }} kg</strong><div class="bar"><i style="width:{{ compliance.progress or 0 }}%"></i></div><p class="small muted">{{ '%.1f'|format(compliance.progress or 0) }}% of configured target</p>{% else %}<strong class="h2">Not configured</strong><p class="muted">Set an EPR target in platform settings before presenting a compliance percentage.</p>{% endif %}</article></div>
+    <article class="card platform-gap"><div class="card-head"><h3 class="h3">Batch trail</h3><span class="small muted">Weight · source · buyer · status</span></div>{% if batches %}<div class="table-wrap"><table><thead><tr><th>Batch</th><th>Material</th><th>Weight</th><th>Status</th><th>Date</th></tr></thead><tbody>{% for b in batches %}<tr><td>{{ b.batch_no or b._id }}</td><td>{{ b.material or '—' }}</td><td>{{ b.weight or b.kg or b.quantity or '—' }} kg</td><td><span class="pill {% if b.status in ['complete','COMPLETE'] %}ok{% elif b.status in ['missing','awaiting_weigh_slip'] %}warn{% endif %}">{{ b.status }}</span></td><td>{{ b.created_at }}</td></tr>{% endfor %}</tbody></table></div>{% else %}<div class="empty"><h3>No batches recorded yet</h3><p>Completed trades and weigh-slip records will appear here.</p></div>{% endif %}</article>
+  </section>
+  {% endif %}
+
+  {% if active_view == 'transactions' %}
+  <section class="platform-section"><div class="page-head"><div><span class="eyebrow">PAYMENTS & ESCROW</span><h2>Paid when the weight is confirmed.</h2><p>Use the existing Daraja, order, transaction and receipt workflows. This surface only presents their live state.</p></div><a class="btn primary" href="/dashboard/transactions">Open transactions</a></div>
+    <article class="card platform-gap"><div class="flow" style="--steps:4"><div class="flow-step"><span class="n">BUYER</span><h3>Funds order</h3><p>Checkout creates the server-authoritative order.</p></div><div class="flow-step"><span class="n">PICKUP</span><h3>Weight confirmed</h3><p>Pickup and weigh-slip evidence advance the deal.</p></div><div class="flow-step hot"><span class="n">RELEASE</span><h3>M-Pesa payout</h3><p>Payment state follows the Daraja callback and reconciliation workflow.</p></div><div class="flow-step"><span class="n">RECORD</span><h3>Receipt + batch</h3><p>Transaction and compliance records remain linked.</p></div></div></article>
+    <article class="card">{% if transactions %}<div class="table-wrap"><table><thead><tr><th>Reference</th><th>Status</th><th>Amount</th><th>Created</th></tr></thead><tbody>{% for x in transactions %}<tr><td>{{ x.receipt_no or x.mpesa_receipt or x._id }}</td><td><span class="pill {% if x.status in ['paid','success','completed'] %}ok{% elif x.status in ['failed','cancelled'] %}bad{% else %}warn{% endif %}">{{ x.status }}</span></td><td>KES {{ '%.2f'|format((x.amount or 0)|float) }}</td><td>{{ x.created_at }}</td></tr>{% endfor %}</tbody></table></div>{% else %}<div class="empty"><h3>No payment records yet</h3><p>Successful and pending transactions will appear here after you trade.</p></div>{% endif %}</article>
+  </section>
+  {% endif %}
+
+  {% if active_view == 'messages' %}
+  <section class="platform-section"><div class="page-head"><div><span class="eyebrow">MESSAGES</span><h2>Keep offers attached to the deal.</h2><p>Conversation records are account-scoped. Use the existing deal/contact workflow for actual negotiation and support.</p></div></div>
+    <div class="grid g2">{% if conversations %}{% for c in conversations %}<article class="card"><div class="row between"><div><h3 class="h3">Conversation {{ c._id }}</h3><p class="small muted">Participants: {{ c.participants|join(', ') }}</p></div><span class="pill">{{ c.updated_at or c.created_at }}</span></div><div class="row" style="margin-top:18px"><a class="btn sm primary" href="/dashboard/">Open workspace</a></div></article>{% endfor %}{% else %}<article class="card empty" style="grid-column:1/-1"><h3>No conversations yet</h3><p>When an offer or deal creates a conversation, it will appear here.</p><a class="btn primary" href="/marketplace/">Browse marketplace</a></article>{% endif %}</div>
+  </section>
+  {% endif %}
+
+  {% if active_view == 'verification' %}
+  <section class="platform-section"><div class="page-head"><div><span class="eyebrow">VERIFICATION</span><h2>Only checked accounts should trade.</h2><p>CIRCULINK records verification state; a NEMA label is shown only when the relevant licence information is actually recorded and reviewed.</p></div></div>
+    <div class="grid g3"><article class="card {% if verification.email %}tint{% endif %}"><span class="eyebrow">EMAIL</span><h3 class="h3">Verified email</h3><span class="pill {% if verification.email %}ok{% else %}warn{% endif %}">{{ 'Verified' if verification.email else 'Pending' }}</span></article><article class="card {% if verification.phone %}tint{% endif %}"><span class="eyebrow">CONTACT</span><h3 class="h3">Kenyan phone</h3><span class="pill {% if verification.phone %}ok{% else %}warn{% endif %}">{{ 'Recorded' if verification.phone else 'Missing' }}</span></article><article class="card {% if verification.status == 'approved' %}tint{% endif %}"><span class="eyebrow">ACCOUNT REVIEW</span><h3 class="h3">{{ verification.status|replace('_',' ')|title }}</h3><span class="pill {% if verification.status == 'approved' %}ok{% else %}warn{% endif %}">{{ verification.status|replace('_',' ') }}</span></article></div>
+    <article class="card platform-gap"><h3 class="h3">Role-specific evidence</h3><div class="checklist"><div><span class="tick {% if verification.company_registration %}ok{% endif %}"><img class="fluent-icon" src="https://cdn.jsdelivr.net/npm/@fluentui/svg-icons/icons/checkmark_20_regular.svg" alt=""></span> Company registration</div><div><span class="tick {% if verification.nema_licence %}ok{% endif %}"><img class="fluent-icon" src="https://cdn.jsdelivr.net/npm/@fluentui/svg-icons/icons/checkmark_20_regular.svg" alt=""></span> NEMA licence where applicable</div><div><span class="tick {% if verification.payout %}ok{% endif %}"><img class="fluent-icon" src="https://cdn.jsdelivr.net/npm/@fluentui/svg-icons/icons/checkmark_20_regular.svg" alt=""></span> M-Pesa payout details</div></div></article>
+  </section>
+  {% endif %}
+
+  {% if active_view == 'admin' and user.role == 'ADMIN' %}
+  <section class="platform-section"><div class="page-head"><div><span class="eyebrow">ADMIN</span><h2>Platform health at a glance.</h2><p>Operational counts come directly from the database; use the existing admin workspace for actions.</p></div><a class="btn primary" href="/admin/">Open admin</a></div>
+    <div class="grid g3"><article class="card tint kpi"><span class="label">Users</span><strong class="num-lg">{{ admin.users }}</strong></article><article class="card flag kpi"><span class="label">Pending verification</span><strong class="num-lg">{{ admin.pending_verification }}</strong></article><article class="card kpi"><span class="label">Active listings</span><strong class="num-lg">{{ admin.active_listings }}</strong></article><article class="card kpi"><span class="label">Open demand</span><strong class="num-lg">{{ admin.open_demands }}</strong></article><article class="card kpi"><span class="label">Open disputes</span><strong class="num-lg">{{ admin.open_disputes }}</strong></article><article class="card sand kpi"><span class="label">Audit events</span><strong class="num-lg">{{ admin.audit_events }}</strong></article></div>
+  </section>
+  {% endif %}
+
+  {% if active_view == 'system' %}
+  <section class="platform-section"><div class="page-head"><div><span class="eyebrow">SYSTEM</span><h2>Uniform CIRCULINK design system.</h2><p>Implemented from the supplied platform design reference: alabaster surfaces, Montserrat display type, Inter UI text, green structure and restrained orange emphasis.</p></div></div>
+    <div class="swatches"><div class="swatch"><div class="chipc" style="background:#F7F5EF"></div><div class="meta"><b>Alabaster</b>#F7F5EF</div></div><div class="swatch"><div class="chipc" style="background:#2E9E4F"></div><div class="meta"><b>Leaf green</b>#2E9E4F</div></div><div class="swatch"><div class="chipc" style="background:#FF7A1A"></div><div class="meta"><b>Sunrise orange</b>#FF7A1A</div></div><div class="swatch"><div class="chipc" style="background:#262B2E"></div><div class="meta"><b>Charcoal</b>#262B2E</div></div></div>
+    <div class="grid g3 platform-gap"><article class="card"><h3 class="h3">Typography</h3><p class="muted">Montserrat 600–800 for headings and numeric anchors. Inter 400–600 for body and controls.</p></article><article class="card"><h3 class="h3">Responsive</h3><p class="muted">248px desktop rail, slide-in navigation below 1000px, stacked layouts below 640px and no intentional horizontal page scroll.</p></article><article class="card"><h3 class="h3">Accessibility</h3><p class="muted">Visible keyboard focus, reduced-motion support, labelled controls and status pills without emoji-only meaning.</p></article></div>
+  </section>
+  {% endif %}
+</div>
+{% endblock %}
+{% block scripts %}
+<script src="{{ url_for('static', filename='vendor/leaflet/leaflet.js') }}"></script>
+<script>
+(function(){
+  const mapEl=document.getElementById('platform-map');
+  if(!mapEl || typeof L==='undefined') return;
+  const points=JSON.parse(mapEl.dataset.points||'[]').map(p=>{const c=(p.location||{}).coordinates||[];return {...p,lat:c[1],lng:c[0]};}).filter(p=>Number.isFinite(p.lat)&&Number.isFinite(p.lng));
+  const map=L.map(mapEl,{scrollWheelZoom:false,zoomControl:true});
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'&copy; OpenStreetMap contributors',maxZoom:19}).addTo(map);
+  if(points.length){const bounds=[];points.forEach(p=>{const marker=L.circleMarker([p.lat,p.lng],{radius:p.type==='listing'?7:6,weight:2,fillOpacity:.85,color:p.type==='listing'?'#2E9E4F':'#2F6FA8'}).addTo(map);marker.bindPopup('<strong>'+String(p.name||'CIRCULINK point').replace(/[<>]/g,'')+'</strong>');bounds.push([p.lat,p.lng]);});map.fitBounds(bounds,{padding:[28,28]});}else{map.setView([-0.42,36.95],10);}
+})();
+</script>
+{% endblock %}
